@@ -33,7 +33,19 @@ Return ONLY JSON matching exactly:
 Dream job description:
 """${dream}"""`;
 
-async function callGemini(apiKey: string, prompt: string) {
+function parseRoadmap(text: string): Roadmap | null {
+  const start = text.indexOf("{");
+  const end = text.lastIndexOf("}");
+  if (start < 0 || end <= start) return null;
+  try {
+    const r = JSON.parse(text.slice(start, end + 1)) as Roadmap;
+    return Array.isArray(r.levels) ? r : null;
+  } catch {
+    return null;
+  }
+}
+
+async function callGemini(apiKey: string, prompt: string): Promise<Roadmap> {
   let lastErr = "";
   for (let attempt = 0; attempt < MODELS.length * 2; attempt++) {
     const MODEL = MODELS[attempt % MODELS.length];
@@ -44,7 +56,7 @@ async function callGemini(apiKey: string, prompt: string) {
         headers: { "Content-Type": "application/json", "x-goog-api-key": apiKey },
         body: JSON.stringify({
           contents: [{ parts: [{ text: prompt }] }],
-          generationConfig: { responseMimeType: "application/json" },
+          generationConfig: { responseMimeType: "application/json", maxOutputTokens: 65536 },
         }),
       },
     );
@@ -52,8 +64,10 @@ async function callGemini(apiKey: string, prompt: string) {
       const json = await res.json();
       const text: string =
         json?.candidates?.[0]?.content?.parts?.map((p: { text?: string }) => p.text ?? "").join("") ?? "";
-      if (text.trim()) return text;
-      lastErr = "empty";
+      const parsed = parseRoadmap(text);
+      if (parsed && parsed.levels.length >= 4) return parsed;
+      lastErr = `bad output from ${MODEL}`;
+      console.error("Gemini bad output", MODEL, json?.candidates?.[0]?.finishReason);
       continue;
     }
     const body = await res.text();
@@ -80,15 +94,5 @@ export const generateRoadmap = createServerFn({ method: "POST" })
   .handler(async ({ data }): Promise<Roadmap> => {
     const apiKey = process.env["GEMINI_API_KEY"];
     if (!apiKey) throw new Error("Gemini API key is not configured.");
-    const text = await callGemini(apiKey, PROMPT(data.dream));
-    const start = text.indexOf("{");
-    const end = text.lastIndexOf("}");
-    const cleaned = start >= 0 && end > start ? text.slice(start, end + 1) : text;
-    try {
-      const parsed = JSON.parse(cleaned) as Roadmap;
-      if (!Array.isArray(parsed.levels) || parsed.levels.length === 0) throw new Error("empty");
-      return parsed;
-    } catch {
-      throw new Error("The AI returned an unreadable roadmap. Please try again.");
-    }
+    return await callGemini(apiKey, PROMPT(data.dream));
   });

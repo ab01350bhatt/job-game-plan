@@ -6,6 +6,10 @@ export type Level = {
   xp: number;
   estimatedTime: string;
   whyItMatters: string;
+  overview?: string;
+  subtopics?: { name: string; explanation: string }[];
+  commonMistakes?: string[];
+  masteryChecklist?: string[];
   steps: { title: string; detail: string }[];
   resources: { name: string; type: string; url: string }[];
   projects: { title: string; description: string; features: string[] }[];

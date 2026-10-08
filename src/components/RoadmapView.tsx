@@ -144,12 +144,44 @@ function LevelModal({ level, index, done, onToggle, onClose }: { level: Level; i
         <div className="mt-5 space-y-3">
           {tab === "learn" && (
             <>
+              {level.overview && (
+                <div className="rounded-2xl border border-border p-4">
+                  <p className="font-display font-bold">What is {level.skill}?</p>
+                  <p className="mt-1 whitespace-pre-line text-sm leading-relaxed text-muted-foreground">{level.overview}</p>
+                </div>
+              )}
+              {!!level.subtopics?.length && (
+                <>
+                  <p className="pt-2 text-sm font-semibold">Everything this skill covers</p>
+                  <div className="grid gap-2 sm:grid-cols-2">
+                    {level.subtopics.map((t, i) => (
+                      <div key={i} className="rounded-2xl bg-muted p-4">
+                        <p className="font-semibold">{t.name}</p>
+                        <p className="mt-1 text-sm text-muted-foreground">{t.explanation}</p>
+                      </div>
+                    ))}
+                  </div>
+                </>
+              )}
+              <p className="pt-2 text-sm font-semibold">Step-by-step to master it</p>
               {level.steps?.map((s, i) => (
                 <div key={i} className="rounded-2xl bg-muted p-4">
                   <p className="font-display font-bold">{i + 1}. {s.title}</p>
                   <p className="mt-1 text-sm text-muted-foreground">{s.detail}</p>
                 </div>
               ))}
+              {!!level.commonMistakes?.length && (
+                <div className="rounded-2xl border border-destructive/40 p-4">
+                  <p className="font-semibold">⚠️ Common mistakes</p>
+                  <ul className="mt-1 list-disc space-y-1 pl-5 text-sm text-muted-foreground">{level.commonMistakes.map((m) => <li key={m}>{m}</li>)}</ul>
+                </div>
+              )}
+              {!!level.masteryChecklist?.length && (
+                <div className="rounded-2xl border border-success/40 p-4">
+                  <p className="font-semibold">✅ You've mastered it when…</p>
+                  <ul className="mt-1 space-y-1 text-sm text-muted-foreground">{level.masteryChecklist.map((m) => <li key={m}>• {m}</li>)}</ul>
+                </div>
+              )}
               <p className="pt-2 text-sm font-semibold">Resources</p>
               <div className="grid gap-2 sm:grid-cols-2">
                 {level.resources?.map((r, i) => (

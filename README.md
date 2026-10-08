@@ -1,24 +1,13 @@
-# Dream Job Navigator
 
-AQ.Ab8RN6JrI25Xh5AeHhej9woY9SV2SqygJXymEAYKZu1JV1Keww   thuis is my api key fo gemini ai i want to make a website that take user input a full stack prompt that contains all the  details about his dream job and wich companyy role he wants and nneds of the company and then the ai use the user input and interprate it to find all the details key eords and understand the needs requireed skills and all thins need for the specafic role and compan then the ai make a full on game styl step by step skill road map wih would be very interactive to the user including skills wich are step wise given as level in game as you complete one the ai could give some real word and relevant project you can buld to test also some intrevew and technical quetion for him to practice the leval shul include all the things in how to master the skill in very detail make sure site is intutive  for my hackathon problem statment revers engineered caear road mapper give me a step by step guide on hoe to build i am just a 1st sem studen so dont now much using vibe coding
 
-This project was built with [Lovable](https://lovable.dev).
+Disha.ai is a gamified, AI-powered career roadmapping platform that reverse-engineers a user's dream job or target company role into an interactive, step-by-step skill tree. It eliminates career paralysis for early-stage students by translating complex industry requirements into beginner-friendly game levels, complete with practical projects and interview practice questions.
 
-## Build with Lovable
 
-Continue developing this project in the [Lovable editor](https://lovable.dev/projects/c555fc1b-5e4a-4158-a712-67e33e4015a9).
 
-- **Ship faster**: describe what you want to build and Lovable handles the code.
-- **Stay in sync**: every change made in Lovable is committed straight to this repository.
-- **Full ownership**: this code is yours. Push to `main` on GitHub and your changes sync back into Lovable, ready for your next prompt.
+Disha.ai is a gamified, full-stack AI platform designed to reverse-engineer a student's dream job or target company role into an actionable, step-by-step career path. Tailored specifically for first-year college students and self-taught developers facing career paralysis, the platform bridges the gap between high-level ambition and daily learning tasks. Instead of overwhelming users with unstructured course lists or dense technical jargon, Disha.ai interprets natural language inputs—such as wanting to become a Full Stack AI Developer at a modern tech startup—and breaks down the required skillset into five digestible learning milestones explained in clear, beginner-friendly language.
 
-## Development
+The visual design is built around an immersive cosmic glassmorphic theme that faithfully captures your target concept art, featuring ambient glowing orbs, translucent container styling, and high-impact typography reading "YOUR FUTURE DESERVES A PLAN." At the heart of the homepage is a rounded search pill input where users enter their target career goal. Once submitted, the interface transitions seamlessly into an interactive roadmap dashboard that charts the user's progress across game-inspired levels, complete with an overall completion progress bar, live XP tracking, and dynamic rank titles that evolve as you advance from Novice to Galactic Master.
 
-Prefer working locally? You need Node.js and npm — [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating).
+Each level node in the roadmap functions as a interactive module packed with actionable resources. When opened, a level dashboard reveals a "Why it Matters" industry breakdown, a simple step-by-step learning guide, a practical beginner project with explicit deliverables, and practice interview questions for technical preparation. To maintain engagement, the platform incorporates multi-sensory feedback through a native Web Audio synthesizer for custom sound effects and celebratory confetti animations upon level completion. All progress is automatically saved to the browser's local storage so learners can resume their path anytime, while a built-in battle plan generator enables one-click PDF printing for offline review.
 
-```sh
-git clone <this-repository-url>
-cd <repository-name>
-npm i
-npm run dev
-```
+Under the hood, Disha.ai utilizes a Node.js and Express backend that securely communicates with the Gemini 2.5 Flash API using strict JSON schema enforcement to structure outputs cleanly. The client side is constructed with lightweight, responsive HTML5, CSS3 glassmorphism, native JavaScript, Lucide icons, and Canvas Confetti. To guarantee reliability during live hackathon judging or network disruptions, the application includes an automated client-side fallback engine that delivers full career paths even if offline, making the application simple to host and run on platforms like Vercel, Render, or GitHub Pages.

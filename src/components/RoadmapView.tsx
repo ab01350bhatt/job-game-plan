@@ -86,9 +86,9 @@ export function RoadmapView({ roadmap, done, onToggle, onReset }: Props) {
         </ol>
       </div>
 
-      {open !== null && (
+      {open !== null && roadmap.levels[open] && (
         <LevelModal
-          level={roadmap.levels[open]}
+          level={roadmap.levels[open]!}
           index={open}
           done={done.includes(open)}
           onToggle={() => onToggle(open)}

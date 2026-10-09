@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { ChevronRight, Loader2, Sparkle } from "lucide-react";
 import { Backdrop } from "@/components/Backdrop";
 import { RoadmapView } from "@/components/RoadmapView";
-import { generateRoadmap } from "@/lib/roadmap.functions";
+import { generateLevel, generateOutline } from "@/lib/roadmap.functions";
 import type { Roadmap } from "@/lib/roadmap-types";
 
 export const Route = createFileRoute("/")({
@@ -29,11 +29,13 @@ const EXAMPLES = [
 const KEY = "rcr-state";
 
 function Index() {
-  const gen = useServerFn(generateRoadmap);
+  const outline = useServerFn(generateOutline);
+  const level = useServerFn(generateLevel);
   const [dream, setDream] = useState("");
   const [roadmap, setRoadmap] = useState<Roadmap | null>(null);
   const [done, setDone] = useState<number[]>([]);
   const [loading, setLoading] = useState(false);
+  const [progress, setProgress] = useState("");
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -50,10 +52,26 @@ function Index() {
 
   async function submit(e?: React.FormEvent) {
     e?.preventDefault();
+    if (loading) return;
     if (dream.trim().length < 10) { setError("Tell us a bit more about your dream job (at least a sentence)."); return; }
-    setLoading(true); setError(null);
+    setLoading(true); setError(null); setProgress("Analysing the role, company needs and skills…");
     try {
-      const r = await gen({ data: { dream } });
+      const o = await outline({ data: { dream } });
+      let n = 0;
+      const total = o.levels.length;
+      setProgress(`Building your levels… 0 of ${total} ready`);
+      const details = await Promise.all(
+        o.levels.map((l, index) =>
+          level({ data: { role: o.role, company: o.company, skill: l.skill, title: l.title, index, total } })
+            .catch(() => null)
+            .then((d) => { n++; setProgress(`Building your levels… ${n} of ${total} ready`); return d; }),
+        ),
+      );
+      const levels = o.levels
+        .map((l, i) => (details[i] ? { ...l, ...details[i]! } : null))
+        .filter((l): l is Roadmap["levels"][number] => l !== null);
+      if (levels.length < 3) throw new Error("The AI could not create your roadmap. Please try again.");
+      const r: Roadmap = { ...o, levels };
       setRoadmap(r); setDone([]); save(r, []);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Something went wrong.");
@@ -99,7 +117,7 @@ function Index() {
             </button>
           </form>
 
-          {loading && <p className="mt-4 text-sm animate-pulse">Analysing the role, company needs and skills… building your levels (≈30s)</p>}
+          {loading && <p className="mt-4 text-sm animate-pulse">{progress}</p>}
           {error && <p className="mt-4 rounded-full bg-destructive/20 px-4 py-2 text-sm">{error}</p>}
 
           {!loading && (
